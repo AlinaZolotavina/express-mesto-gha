@@ -1,0 +1,19 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable linebreak-style */
+const router = require('express').Router();
+const User = require('../models/user');
+const {
+  getUsers,
+  getUserById,
+  createUser,
+  updateUserProfile,
+  updateUserAvatar,
+} = require('../controllers/users');
+
+router.get('/users', getUsers);
+router.get('/users/:id', getUserById);
+router.post('/users', createUser);
+router.patch('/users/me', updateUserProfile);
+router.patch('/users/me/avatar', updateUserAvatar);
+
+module.exports = router;
