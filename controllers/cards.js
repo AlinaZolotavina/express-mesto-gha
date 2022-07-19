@@ -17,8 +17,13 @@ const deleteCard = (req, res) => {
       }
       res.status(statusCodes.OK).send({ message: 'Карточка удалена' });
     })
-    // eslint-disable-next-line no-unused-vars
-    .catch((err) => res.status(statusCodes.default).send({ message: 'Произошла ошибка' }));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(statusCodes.badRequest).send({ message: 'Некорректный id карточки' });
+        return;
+      }
+      res.status(statusCodes.default).send({ message: 'Произошла ошибка' });
+    });
 };
 
 const createCard = (req, res) => {

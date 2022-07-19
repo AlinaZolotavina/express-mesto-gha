@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const router = require('./routes/index');
+const statusCodes = require('./utils/statusCodes');
 
 const { PORT = 3000 } = process.env;
 
@@ -23,6 +24,10 @@ app.use((req, res, next) => {
 });
 
 app.use(router);
+
+app.use('*', (req, res) => {
+  res.status(statusCodes.notFound).send({ message: 'Запрашиваемый ресурс не найден' });
+});
 
 app.listen(PORT, () => {
   console.log(`Сервер слушает порт ${PORT}`);

@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "npx eslint .",
-    "start": "app.js",
+    "start": "node app.js",
     "dev": "nodemon  app.js"
   },
   "repository": {
@@ -22,11 +22,8 @@
   "homepage": "https://github.com/AlinaZolotavina/express-mesto-gha#readme",
   "devDependencies": {
     "eslint": "^8.19.0",
-    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.26.0",
-    "eslint-plugin-jsx-a11y": "^6.6.0",
-    "eslint-plugin-react": "^7.30.1",
-    "eslint-plugin-react-hooks": "^4.6.0",
     "nodemon": "^2.0.19"
   },
   "dependencies": {

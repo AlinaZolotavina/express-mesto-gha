@@ -22,6 +22,10 @@ const getUserById = (req, res) => {
       res.send({ data: user });
     })
     .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(statusCodes.badRequest).send({ message: 'Некорректный id карточки' });
+        return;
+      }
       res.status(statusCodes.default).send({ message: 'Произошла ошибка' });
     });
 };
@@ -48,7 +52,7 @@ const updateUserProfile = ((req, res) => {
         res.status(statusCodes.notFound).send({ message: 'Пользователь не найден' });
         return;
       }
-      res.status(statusCodes.OK).send({ data: user, message: 'Данные обновлены' });
+      res.status(statusCodes.OK).send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -68,7 +72,7 @@ const updateUserAvatar = (req, res) => {
         res.status(statusCodes.notFound).send({ message: 'Пользователь не найден' });
         return;
       }
-      res.status(statusCodes.OK).send({ data: user, message: 'Аватар обновлен' });
+      res.status(statusCodes.OK).send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
