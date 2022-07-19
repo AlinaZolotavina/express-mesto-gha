@@ -1,4 +1,3 @@
-const path = require('path');
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -25,7 +24,6 @@ app.use((req, res, next) => {
 
 app.use(router);
 
-app.use(express.static(path.join(__dirname, 'public')));
 app.listen(PORT, () => {
   console.log(`Сервер слушает порт ${PORT}`);
 });
