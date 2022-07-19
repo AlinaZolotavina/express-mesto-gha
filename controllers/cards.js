@@ -31,7 +31,7 @@ const createCard = (req, res) => {
   const owner = req.user._id;
 
   Card.create({ name, link, owner })
-    .then((card) => res.send({ data: card }))
+    .then((card) => res.status(statusCodes.created).send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(statusCodes.badRequest).send({ message: 'Введенные данные некорректны' });
@@ -44,7 +44,6 @@ const createCard = (req, res) => {
 const likeCard = (req, res) => {
   const { cardId } = req.params;
   const userId = req.user._id;
-  console.log(req.params);
   Card.findByIdAndUpdate(
     cardId,
     { $addToSet: { likes: userId } },
