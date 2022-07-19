@@ -1,7 +1,4 @@
-/* eslint-disable linebreak-style */
-/* eslint-disable no-unused-vars */
 const router = require('express').Router();
-const Card = require('../models/card');
 const {
   getCards,
   deleteCard,

@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-/* eslint-disable linebreak-style */
 const router = require('express').Router();
 const userRouter = require('./users');
 const cardRouter = require('./cards');

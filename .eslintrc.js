@@ -19,6 +19,7 @@ module.exports = {
   ],
   rules: {
     'no-underscore-dangle': ['error', { allow: ['_id'] }],
-    'no-useless-escape': 'allow',
+    'no-console': 0,
+    'linebreak-style': 0,
   },
 };

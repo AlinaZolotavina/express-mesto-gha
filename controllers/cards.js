@@ -1,27 +1,24 @@
-/* eslint-disable no-console */
-/* eslint-disable linebreak-style */
-/* eslint-disable no-unused-vars */
-/* eslint-disable indent */
 const Card = require('../models/card');
 const statusCodes = require('../utils/statusCodes');
 
 const getCards = (req, res) => {
   Card.find({})
-  .then((cards) => res.send({ data: cards }))
-  .catch(() => res.status(statusCodes.default).send({ message: 'Произошла ошибка' }));
+    .then((cards) => res.send({ data: cards }))
+    .catch(() => res.status(statusCodes.default).send({ message: 'Произошла ошибка' }));
 };
 
 const deleteCard = (req, res) => {
   const { cardId } = req.params;
   Card.findByIdAndRemove(cardId)
-  .then((card) => {
-    if (!card) {
-      res.status(statusCodes.notFound).send({ message: 'Карточка не найдена' })
-      return;
-    };
-    res.status(statusCodes.OK).send({ message: 'Карточка удалена' });
-  })
-  .catch((err) => res.status(statusCodes.default).send({ message: 'Произошла ошибка' }));
+    .then((card) => {
+      if (!card) {
+        res.status(statusCodes.notFound).send({ message: 'Карточка не найдена' });
+        return;
+      }
+      res.status(statusCodes.OK).send({ message: 'Карточка удалена' });
+    })
+    // eslint-disable-next-line no-unused-vars
+    .catch((err) => res.status(statusCodes.default).send({ message: 'Произошла ошибка' }));
 };
 
 const createCard = (req, res) => {
@@ -35,7 +32,7 @@ const createCard = (req, res) => {
         res.status(statusCodes.badRequest).send({ message: 'Введенные данные некорректны' });
         return;
       }
-      res.status(statusCodes.default).send({ message: 'Произошла ошибка' })
+      res.status(statusCodes.default).send({ message: 'Произошла ошибка' });
     });
 };
 
@@ -48,44 +45,43 @@ const likeCard = (req, res) => {
     { $addToSet: { likes: userId } },
     { new: true },
   )
-  .then((card) => {
-    if(!card) {
-      res.status(statusCodes.notFound).send({ message: 'Карточка не найдена'});
-      return;
-    };
-    res.send({ data: card })
-  })
-  .catch((err) => {
-    if (err.name === 'CastError') {
-      res.status(statusCodes.badRequest).send({ message: 'Некорректный id карточки' });
-      return;
-    }
-    res.status(statusCodes.default).send({ message: 'Произошла ошибка' })
-  });
+    .then((card) => {
+      if (!card) {
+        res.status(statusCodes.notFound).send({ message: 'Карточка не найдена' });
+        return;
+      }
+      res.send({ data: card });
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(statusCodes.badRequest).send({ message: 'Некорректный id карточки' });
+        return;
+      }
+      res.status(statusCodes.default).send({ message: 'Произошла ошибка' });
+    });
 };
 
 const dislikeCard = (req, res) => {
   const { cardId } = req.params;
-  const userId = req.user._id;
   Card.findByIdAndUpdate(
     cardId,
     { $pull: { likes: req.user._id } },
     { new: true },
   )
-  .then((card) => {
-    if(!card) {
-      res.status(statusCodes.notFound).send({ message: 'Карточка не найдена'});
-      return;
-    };
-    res.send({ data: card })
-  })
-  .catch((err) => {
-    if (err.name === 'CastError') {
-      res.status(statusCodes.badRequest).send({ message: 'Некорректный id карточки' });
-      return;
-    }
-    res.status(statusCodes.default).send({ message: 'Произошла ошибка' })
-  });
+    .then((card) => {
+      if (!card) {
+        res.status(statusCodes.notFound).send({ message: 'Карточка не найдена' });
+        return;
+      }
+      res.send({ data: card });
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(statusCodes.badRequest).send({ message: 'Некорректный id карточки' });
+        return;
+      }
+      res.status(statusCodes.default).send({ message: 'Произошла ошибка' });
+    });
 };
 
 module.exports = {

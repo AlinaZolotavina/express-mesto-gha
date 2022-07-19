@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 const path = require('path');
 const express = require('express');
 const mongoose = require('mongoose');
@@ -18,7 +17,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 
 app.use((req, res, next) => {
   req.user = {
-    _id: '62d3d2d125bad9b57f39a3e3',
+    _id: '62d422c3074e9697795467eb',
   };
 
   next();

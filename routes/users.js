@@ -1,7 +1,4 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable linebreak-style */
 const router = require('express').Router();
-const User = require('../models/user');
 const {
   getUsers,
   getUserById,
