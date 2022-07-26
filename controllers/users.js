@@ -1,11 +1,37 @@
 /* eslint-disable no-unused-vars */
+const { NODE_ENV, JWT_SECRET } = process.env;
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const statusCodes = require('../utils/statusCodes');
+
+const login = (req, res) => {
+  const { email, password } = req.body;
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign(
+        { _id: user._id },
+        NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
+        { expiresIn: '7d' },
+      );
+      res
+        .cookie('jwt', token, {
+          maxAge: 3600000 * 24 * 7,
+          httpOnly: true,
+        })
+        .end();
+    })
+    .catch((err) => {
+      res
+        .status(401)
+        .send({ message: err.message });
+    });
+};
 
 const getUsers = (req, res) => {
   User.find({})
     .then((users) => {
-      res.send({ data: users });
+      res.send(users);
     })
     .catch((err) => {
       res.status(statusCodes.default).send({ message: 'Произошла ошибка' });
@@ -19,11 +45,29 @@ const getUserById = (req, res) => {
         res.status(statusCodes.notFound).send({ message: 'Пользователь не найден' });
         return;
       }
-      res.send({ data: user });
+      res.send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(statusCodes.badRequest).send({ message: 'Некорректный id карточки' });
+        res.status(statusCodes.badRequest).send({ message: 'Некорректный id пользователя' });
+        return;
+      }
+      res.status(statusCodes.default).send({ message: 'Произошла ошибка' });
+    });
+};
+
+const getMe = (req, res) => {
+  User.findById(req.user._id)
+    .then((user) => {
+      if (!user) {
+        res.status(statusCodes.notFound).send({ message: 'Пользователь не найден' });
+        return;
+      }
+      res.send(user);
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(statusCodes.badRequest).send({ message: 'Некорректный id пользователя' });
         return;
       }
       res.status(statusCodes.default).send({ message: 'Произошла ошибка' });
@@ -31,9 +75,15 @@ const getUserById = (req, res) => {
 };
 
 const createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
-  User.create({ name, about, avatar })
-    .then((user) => res.status(statusCodes.created).send({ data: user }))
+  bcrypt.hash(req.body.password, 10)
+    .then((hash) => User.create({
+      email: req.body.email,
+      password: hash,
+      name: req.body.name,
+      about: req.body.about,
+      avatar: req.body.avatar,
+    }))
+    .then((user) => res.status(statusCodes.created).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(statusCodes.badRequest).send({ message: 'Введенные данные некорректны' });
@@ -84,8 +134,10 @@ const updateUserAvatar = (req, res) => {
 };
 
 module.exports = {
+  login,
   getUsers,
   getUserById,
+  getMe,
   createUser,
   updateUserProfile,
   updateUserAvatar,

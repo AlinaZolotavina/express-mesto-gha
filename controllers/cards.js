@@ -15,6 +15,9 @@ const deleteCard = (req, res) => {
         res.status(statusCodes.notFound).send({ message: 'Карточка не найдена' });
         return;
       }
+      if (card.owner !== req.user_id) {
+        res.status(statusCodes.forbidden).send({ message: 'Нельзя удалить карточку другого пользователя' });
+      }
       res.status(statusCodes.OK).send({ message: 'Карточка удалена' });
     })
     .catch((err) => {
