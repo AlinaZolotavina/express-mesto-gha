@@ -16,12 +16,12 @@ const login = (req, res, next) => {
         NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
         { expiresIn: '7d' },
       );
-      res
-        .cookie('jwt', token, {
-          maxAge: 3600000 * 24 * 7,
-          httpOnly: true,
-        })
+      res.cookie('jwt', token, {
+        maxAge: 3600000 * 24 * 7,
+        httpOnly: true,
+      })
         .end();
+      // .send({ token });
     })
     .catch(next);
 };
@@ -75,7 +75,14 @@ const createUser = (req, res, next) => {
       about: req.body.about,
       avatar: req.body.avatar,
     }))
-    .then((user) => res.status(201).send(user))
+    .then((user) => res.status(201).send({
+      user: {
+        email: user.email,
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+      },
+    }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError(err.message));

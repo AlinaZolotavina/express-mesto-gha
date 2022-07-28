@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const isEmail = require('validator/lib/isEmail');
 const UnauthorizedError = require('../errors/unauthorized-err');
+const { validateUrl } = require('../utils/validateUrl');
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -35,10 +36,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     validate: {
-      validator(v) {
-        // eslint-disable-next-line no-useless-escape
-        return /^(https?:\/\/)(w{3})?([\da-z\.\-]+)\.([a-z\.]{2,6})([\w\.\-\_~:\/?#\[\]@!$&\'()*\+,;=])*#?\/?$/.test(v);
-      },
+      validator: validateUrl,
       message: 'Некорректная ссылка на картинку',
     },
   },
