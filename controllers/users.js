@@ -42,7 +42,7 @@ const getUserById = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequestError('Некорректный id пользователя');
+        next(new BadRequestError('Некорректный id пользователя'));
       } else {
         next(err);
       }
@@ -59,7 +59,7 @@ const getMe = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequestError('Некорректный id пользователя');
+        next(new BadRequestError('Некорректный id пользователя'));
       } else {
         next(err);
       }
@@ -78,9 +78,9 @@ const createUser = (req, res, next) => {
     .then((user) => res.status(201).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new BadRequestError(err.message);
+        next(new BadRequestError(err.message));
       } else if (err.code === 11000) {
-        throw new ConflictError('Пользователь с таким e-mail уже существует');
+        next(new ConflictError('Пользователь с таким e-mail уже существует'));
       } else {
         next(err);
       }
@@ -99,7 +99,7 @@ const updateUserProfile = ((req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new BadRequestError('Введенные данные некорректны');
+        next(new BadRequestError('Введенные данные некорректны'));
       } else {
         next(err);
       }
@@ -118,7 +118,7 @@ const updateUserAvatar = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new BadRequestError('Некорректная ссылка на картинку');
+        next(new BadRequestError('Некорректная ссылка на картинку'));
       } else {
         next(err);
       }
