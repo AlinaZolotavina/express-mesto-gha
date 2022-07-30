@@ -1,10 +1,10 @@
-/* eslint-disable no-unused-vars */
 const { NODE_ENV, JWT_SECRET } = process.env;
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const NotFoundError = require('../errors/not-found-err');
 const ConflictError = require('../errors/conflict-err');
+const BadRequestError = require('../errors/bad-request-err');
 
 const login = (req, res, next) => {
   const { email, password } = req.body;
@@ -35,9 +35,9 @@ const getUserById = (req, res, next) => {
   User.findById(req.params.id)
     .then((user) => {
       if (!user) {
-        next(new NotFoundError('Пользователь не найден'));
+        return next(new NotFoundError('Пользователь не найден'));
       }
-      res.send(user);
+      return res.send(user);
     })
     .catch(next);
 };
@@ -46,9 +46,9 @@ const getMe = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
       if (!user) {
-        next(new NotFoundError('Пользователь не найден'));
+        return next(new NotFoundError('Пользователь не найден'));
       }
-      res.send(user);
+      return res.send(user);
     })
     .catch(next);
 };
@@ -72,9 +72,12 @@ const createUser = (req, res, next) => {
     }))
     .catch((err) => {
       if (err.name === 'MongoServerError' || err.code === 11000) {
-        next(new ConflictError('Пользователь с таким e-mail уже существует'));
+        return next(new ConflictError('Пользователь с таким e-mail уже существует'));
       }
-      next(err);
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
+        return next(new BadRequestError('Введенные данные некорректны'));
+      }
+      return next(err);
     });
 };
 
@@ -84,9 +87,9 @@ const updateUserProfile = ((req, res, next) => {
   User.findByIdAndUpdate(userId, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        next(new NotFoundError('Пользователь не найден'));
+        return next(new NotFoundError('Пользователь не найден'));
       }
-      res.status(200).send(user);
+      return res.status(200).send(user);
     })
     .catch(next);
 });
@@ -97,9 +100,9 @@ const updateUserAvatar = (req, res, next) => {
   User.findByIdAndUpdate(userId, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        next(new NotFoundError('Пользователь не найден'));
+        return next(new NotFoundError('Пользователь не найден'));
       }
-      res.status(200).send(user);
+      return res.status(200).send(user);
     })
     .catch(next);
 };
