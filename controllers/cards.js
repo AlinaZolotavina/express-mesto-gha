@@ -10,7 +10,7 @@ const getCards = (req, res, next) => {
 
 const deleteCard = (req, res, next) => {
   const { cardId } = req.params;
-  Card.findByIdAndRemove(cardId)
+  Card.findById(cardId)
     .then((card) => {
       if (!card) {
         return next(new NotFoundError('Карточка не найдена'));
@@ -18,7 +18,9 @@ const deleteCard = (req, res, next) => {
       if (card.owner._id.toString() !== req.user._id.toString()) {
         return next(new ForbiddenError('Нельзя удалить карточку другого пользователя'));
       }
-      return res.status(200).send({ message: 'Карточка  удалена' });
+      return card.remove()
+        .then((deletedCard) => res.status(200).send({ data: deletedCard, message: 'Карточка  удалена' }))
+        .catch(next);
     })
     .catch(next);
 };
